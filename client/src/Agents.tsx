@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useGetAgentsQuery } from "@/api";
@@ -6,6 +7,10 @@ import "./App.css";
 function Agents() {
     const navigate = useNavigate();
     const { data: agents, isLoading } = useGetAgentsQuery()
+
+    useEffect(() => {
+        agents?.length && navigate(`/${agents[0].id}/chat`);
+    }, [agents]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4">

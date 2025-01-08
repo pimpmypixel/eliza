@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { TextResponse } from "@/api";
 import { useSendMessageMutation } from "@/api";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, LocateIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./App.css";
@@ -54,7 +54,7 @@ export default function Chat() {
     return (
         <div className="flex flex-col h-screen max-h-screen w-full">
             <div className="flex-1 min-h-0 overflow-y-auto p-4">
-                <div className="max-w-3xl mx-auto space-y-4">
+                <div className="max-w-3xl mx-auto space-y-3 text-sm">
                     {messages.length > 0 ? (
                         messages.map((message, index) => (
                             <div
@@ -92,8 +92,8 @@ export default function Chat() {
                             </div>
                         ))
                     ) : (
-                        <div className="text-center text-muted-foreground">
-                            No messages yet. Start a conversation!
+                        <div className="text-center text-sm text-muted-foreground">Hello, I'm <span className="text-blue-500">AI-TINERARY</span><br />your realtime travel assistant!<br />
+                        Tell me where you are and how much time you have to explore!
                         </div>
                     )}
                     <div ref={messagesEndRef} />
@@ -111,21 +111,22 @@ export default function Chat() {
                             className="hidden"
                         />
                         <Input
+                        // alt="Update location"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder="Type a message..."
                             className="flex-1"
                             disabled={isPending}
                         />
-                        <Button
+                        {/* <Button
                             type="button"
                             variant="outline"
                             size="icon"
                             onClick={handleFileSelect}
                             disabled={isPending}
                         >
-                            <ImageIcon className="h-4 w-4" />
-                        </Button>
+                            <LocateIcon className="h-4 w-4" />
+                        </Button> */}
                         <Button type="submit" disabled={isPending}>
                             {isPending ? "..." : "Send"}
                         </Button>

@@ -1,18 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import type { TextResponse } from "@/api";
 import { useSendMessageMutation } from "@/api";
-import { RotateCw, ThumbsUpIcon, ThumbsDownIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useGetAgentsQuery } from "@/api";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
+import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
+import { MessageDialog } from "@/components/dialogs/MessageDialog";
+import { LocationDialog } from "@/components/dialogs/LocationDialog";
+import { VoiceDialog } from "@/components/dialogs/VoiceDialog";
+import { ShareDialog } from "@/components/dialogs/ShareDialog";
 import "./App.css";
 
 const durations: string[] = ["15 mins", "half hour", "1 hour", "3 hours", "6 hours", "1 day", "2 days", "3 days", "1 week", "2 weeks"];
@@ -34,8 +31,11 @@ export default function Chat() {
     const [town, setTown] = useState<string | null>(null);
     const [isContinuePrompt, setIsContinuePrompt] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
     const [newLocation, setNewLocation] = useState("");
     const { data: agents, isLoading } = useGetAgentsQuery()
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -114,10 +114,10 @@ export default function Chat() {
 
             const data = await response.json();
             if (data.display_name) {
-                const city =  data.address.suburb ?? data.address.town// ?? data.address.display_name;
+                const city = data.address.suburb ?? data.address.town// ?? data.address.display_name;
                 setTown(city);
                 const country = data.address.country;
-                const loc = `${city ?city + ', ' : ''}${country ?country : ''}`;
+                const loc = `${city ? city + ', ' : ''}${country ? country : ''}`;
                 setLocation(loc);
             }
         } catch (error) {
@@ -134,7 +134,7 @@ export default function Chat() {
 
     useEffect(() => {
         handleContext();
-    }, [selectedCategories,selectedDuration]);
+    }, [selectedCategories, selectedDuration]);
 
 
     return (
@@ -145,99 +145,97 @@ export default function Chat() {
                         messages.map((message, index) => (
                             <div
                                 key={index}
-                                className={`text-left flex ${
-                                    message.user === "user"
-                                        ? "justify-end"
-                                        : "justify-start"
-                                }`}
+                                className={`text-left flex ${message.user === "user"
+                                    ? "justify-end"
+                                    : "justify-start"
+                                    }`}
                             >
                                 <pre
                                     style={
                                         message.user === "user" ? {
-                                        fontSize: '100%',
-                                    }: {
-                                        fontSize: '70%',
-                                    }}
-                                    className={`max-w-[80%] rounded-lg px-4 py-2 whitespace-pre-wrap ${
-                                        message.user === "user"
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted"
-                                    }`}
+                                            fontSize: '100%',
+                                        } : {
+                                            fontSize: '70%',
+                                        }}
+                                    className={`max-w-[80%] rounded-lg px-4 py-2 whitespace-pre-wrap ${message.user === "user"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-muted"
+                                        }`}
                                 >
                                     {message.text}
-                                 </pre>
+                                </pre>
                             </div>
                         ))
                     ) : (
                         <div className="text-center text-sm text-muted-foreground">Hi there! I'm <span className="text-blue-500 font-bold">AI-TINERARY</span><br />your realtime travel assistant!<br />
-                        So what do you want to do in <Button
-                            size="xs"
-                            className="text-xs p-1 ml-1 bg-secondary text-primary-foreground"
-                            onClick={() => switchLocation()}
-                        >
-                           {town}
-                        </Button>
-                        <hr className="my-2" />
-                        <div className="flex flex-col gap-2">
+                            So what do you want to do in <Button
+                                size="xs"
+                                className="text-xs p-1 ml-1 bg-secondary text-primary-foreground"
+                                onClick={() => switchLocation()}
+                            >
+                                {town}
+                            </Button>
+                            <hr className="my-2" />
                             <div className="flex flex-col gap-2">
-                                <span className="font-bold">How much time do we have?</span>
-                                <div className="flex flex-wrap gap-2">
-                                {durations.map((duration) => (
-                                        <Button
-                                            size="xs"
-                                            className="text-xs p-1"
-                                            key={duration}
-                                            variant={selectedDuration === duration ? "default" : "outline"}
-                                            onClick={() => setSelectedDuration(duration === selectedDuration ? null : duration)}
-                                        >
-                                            {duration}
-                                        </Button>
-                                    ))}
+                                <div className="flex flex-col gap-2">
+                                    <span className="font-bold">How much time do we have?</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {durations.map((duration) => (
+                                            <Button
+                                                size="xs"
+                                                className="text-xs p-1"
+                                                key={duration}
+                                                variant={selectedDuration === duration ? "default" : "outline"}
+                                                onClick={() => setSelectedDuration(duration === selectedDuration ? null : duration)}
+                                            >
+                                                {duration}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <hr className="my-2" />
-                        <div className="flex flex-col gap-2">
+                            <hr className="my-2" />
                             <div className="flex flex-col gap-2">
-                                <span className="font-bold">Select your desired activities</span>
-                                <div className="flex flex-wrap gap-2">
-                                    {categories.map((category) => (
-                                        <Button
-                                            key={category}
-                                            size="xs"
-                                            className="text-xs p-1"
-                                            variant={selectedCategories.includes(category) ? "default" : "outline"}
-                                            onClick={() => {
-                                                setSelectedCategories(prev => prev.length >= 3 && !prev.includes(category) ? prev :
-                                                    prev.includes(category)
-                                                        ? prev.filter(c => c !== category)
-                                                        : [...prev, category]
-                                                );
-                                            }}
-                                        >
-                                            {category}
-                                        </Button>
-                                    ))}
+                                <div className="flex flex-col gap-2">
+                                    <span className="font-bold">Select your desired activities</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {categories.map((category) => (
+                                            <Button
+                                                key={category}
+                                                size="xs"
+                                                className="text-xs p-1"
+                                                variant={selectedCategories.includes(category) ? "default" : "outline"}
+                                                onClick={() => {
+                                                    setSelectedCategories(prev => prev.length >= 3 && !prev.includes(category) ? prev :
+                                                        prev.includes(category)
+                                                            ? prev.filter(c => c !== category)
+                                                            : [...prev, category]
+                                                    );
+                                                }}
+                                            >
+                                                {category}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                     )}{
                         isContinuePrompt && <div className="text-center text-sm text-muted-foreground">
-                        <Button
-                            size="xs"
-                            className="text-xs p-1 px-2"
-                            onClick={() => handleContinue('yes')}
-                        >
-                            Yes please!
-                        </Button>
-                        <Button
-                            size="xs"
-                            className="text-xs p-1 ml-2"
-                            onClick={() => handleContinue('no')}
-                        >
-                            No, thanks.
-                        </Button>
+                            <Button
+                                size="xs"
+                                className="text-xs p-1 px-2"
+                                onClick={() => handleContinue('yes')}
+                            >
+                                Yes please!
+                            </Button>
+                            <Button
+                                size="xs"
+                                className="text-xs p-1 ml-2"
+                                onClick={() => handleContinue('no')}
+                            >
+                                No, thanks.
+                            </Button>
                         </div>
                     }
                     <div ref={messagesEndRef} />
@@ -246,47 +244,46 @@ export default function Chat() {
 
             <div className="border-t p-4 bg-background">
                 <div className="max-w-3xl mx-auto">
-                    <form onSubmit={handleSubmit} className="flex gap-2">
-                        <Input
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type a message..."
-                            className="flex-1"
-                            disabled={isPending}
-                        />
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            onClick={() => navigate(`/`)}
-                        >
-                            <RotateCw className={`h-4 w-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-                        </Button>
-                        <Button
-                        type="submit"
-                        disabled={isPending}
-                        >
-                            {isPending ? "..." : "Go!"}
-                        </Button>
-                    </form>
+                    <div className="flex justify-between items-center">
+                        <div className="mx-1">
+                            <SettingsDialog
+                                isOpen={isSettingsModalOpen}
+                                onOpenChange={setIsSettingsModalOpen}
+                            />
+                        </div>
+                        <div className="mx-1">
+                            <ShareDialog
+                                isOpen={isShareDialogOpen}
+                                onOpenChange={setIsShareDialogOpen}
+                            />
+                        </div>
+                        <div className="mx-1 scale-150">
+                            <VoiceDialog />
+                        </div>
+                        <div className="mx-1">
+                            <MessageDialog
+                                isOpen={isMessageDialogOpen}
+                                onOpenChange={setIsMessageDialogOpen}
+                                input={input}
+                                onInputChange={(value) => setInput(value)}
+                                onSubmit={handleSubmit}
+                                isPending={isPending}
+                            />
+                        </div>
+                        <div className="mx-1">
+                            <LocationDialog
+                                isOpen={isLocationModalOpen}
+                                onOpenChange={setIsLocationModalOpen}
+                                newLocation={newLocation}
+                                onLocationChange={(value) => setNewLocation(value)}
+                                onSubmit={handleLocationSubmit}
+                                isLoadingLocation={isLoadingLocation}
+                                onGetLocation={handleGetLocation}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
-            <Dialog open={isLocationModalOpen} onOpenChange={setIsLocationModalOpen}>
-<DialogContent>
-<DialogHeader>
-<DialogTitle>Enter New Location</DialogTitle>
-</DialogHeader>
-<form onSubmit={(e) => { e.preventDefault(); handleLocationSubmit(); }}>
-<Input
-value={newLocation}
-onChange={(e) => setNewLocation(e.target.value)}
-placeholder="e.g. Paris, France"
-className="mb-4"
-/>
-<Button type="submit">Save Location</Button>
-</form>
-</DialogContent>
-</Dialog>
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import path from "path";
+import fs from 'fs';
 import { defineConfig } from "vite";
 import topLevelAwait from "vite-plugin-top-level-await";
 import react from "@vitejs/plugin-react";
@@ -27,7 +28,14 @@ export default defineConfig({
         },
     },
     server: {
-        host: true,
+        // host: true,
+        host: '0.0.0.0',
+        // host: 'aitinerary.redirectme.net',      // Optional: Your domain name
+        // https: {
+        //   key: fs.readFileSync(path.resolve(__dirname, './aitinerary/aitinerary.redirectme.net-key.pem')),
+        //   cert: fs.readFileSync(path.resolve(__dirname, './aitinerary/aitinerary.redirectme.net.pem')),
+        // },
+        // port: 443,
         proxy: {
             "/api": {
                 target: `http://127.0.0.1:${process.env.SERVER_PORT || 3000}`,

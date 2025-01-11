@@ -21,7 +21,7 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[typescriptreact]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "remimarsal.prettier-now"
     },
     "[javascriptreact]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
@@ -30,7 +30,7 @@
         "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "remimarsal.prettier-now"
     },
     "[scss]": {
         "editor.defaultFormatter": "vscode.css-language-features"

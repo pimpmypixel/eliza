@@ -136,6 +136,12 @@ export default function Chat() {
         handleContext();
     }, [selectedCategories, selectedDuration]);
 
+    useEffect(() => {
+        if (input) {
+            handleSubmit(new Event('submit'));
+        }
+    }, [input]);
+
 
     return (
         <div className="flex flex-col h-screen max-h-screen w-full">
@@ -258,7 +264,8 @@ export default function Chat() {
                             />
                         </div>
                         <div className="mx-1 scale-150">
-                            <VoiceDialog />
+                            <VoiceDialog
+                                onRecord={(text) => setInput(text)} />
                         </div>
                         <div className="mx-1">
                             <MessageDialog

@@ -11,6 +11,8 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@babel/runtime": "^7.26.0",
+        "@deepgram/sdk": "^3.9.0",
         "@elizaos/core": "workspace:*",
         "@radix-ui/react-dialog": "1.1.2",
         "@radix-ui/react-separator": "1.1.0",
@@ -23,6 +25,8 @@
         "react": "18.3.1",
         "react-dom": "18.3.1",
         "react-router-dom": "6.22.1",
+        "react-speech-recognition": "^3.10.0",
+        "regenerator-runtime": "^0.14.1",
         "tailwind-merge": "2.5.5",
         "tailwindcss-animate": "1.0.7",
         "vite-plugin-top-level-await": "1.4.4",
@@ -44,5 +48,8 @@
         "typescript": "5.6.3",
         "typescript-eslint": "8.11.0",
         "vite": "link:@tanstack/router-plugin/vite"
-    }
+    },
+    "browserslist": [
+        "last 2 Chrome versions"
+    ]
 }

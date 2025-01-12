@@ -138,7 +138,7 @@ export default function Chat() {
 
     useEffect(() => {
         if (input) {
-            handleSubmit(new Event('submit'));
+            handleSubmit({ preventDefault: () => { } } as React.FormEvent);
         }
     }, [input]);
 

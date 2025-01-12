@@ -29,15 +29,6 @@ export function LocationDialog({
 }: LocationDialogProps) {
     return (
         <>
-            <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={onGetLocation}
-            >
-                <RotateCw className={`h-4 w-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-            </Button>
-
             <Dialog open={isOpen} onOpenChange={onOpenChange}>
                 <DialogContent>
                     <DialogHeader>

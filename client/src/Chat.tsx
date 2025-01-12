@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useGetAgentsQuery } from "@/api";
+import { RotateCw } from "lucide-react";
 import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
 import { MessageDialog } from "@/components/dialogs/MessageDialog";
 import { LocationDialog } from "@/components/dialogs/LocationDialog";
@@ -33,7 +34,7 @@ export default function Chat() {
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
     const [newLocation, setNewLocation] = useState("");
-    const { data: agents, isLoading } = useGetAgentsQuery()
+    // const { data: agents, isLoading } = useGetAgentsQuery()
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
@@ -278,19 +279,28 @@ export default function Chat() {
                             />
                         </div>
                         <div className="mx-1">
-                            <LocationDialog
-                                isOpen={isLocationModalOpen}
-                                onOpenChange={setIsLocationModalOpen}
-                                newLocation={newLocation}
-                                onLocationChange={(value) => setNewLocation(value)}
-                                onSubmit={handleLocationSubmit}
-                                isLoadingLocation={isLoadingLocation}
-                                onGetLocation={handleGetLocation}
-                            />
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="icon"
+                                onClick={() => navigate('/')}
+                            >
+                                <RotateCw className={`h-4 w-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+                            </Button>
+
                         </div>
                     </div>
                 </div>
             </div>
+            <LocationDialog
+                isOpen={isLocationModalOpen}
+                onOpenChange={setIsLocationModalOpen}
+                newLocation={newLocation}
+                onLocationChange={(value) => setNewLocation(value)}
+                onSubmit={handleLocationSubmit}
+                isLoadingLocation={isLoadingLocation}
+                onGetLocation={handleGetLocation}
+            />
         </div>
     );
 }

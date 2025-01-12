@@ -112,7 +112,7 @@ export function VoiceDialog({ onRecord }: VoiceDialogProps) {
                 size="icon"
                 onClick={() => setIsPressed(true)}
             >
-                <Mic className={`h-4 w-4 ${record ? 'text-primary animate-pulse' : ''}`} />
+                <Mic className={`text-primary h-4 w-4 ${record ? 'text-primary animate-pulse' : ''}`} />
             </Button>
 
             <Dialog open={isPressed} onOpenChange={setIsPressed}>

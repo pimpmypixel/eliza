@@ -6,6 +6,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { KeyboardIcon } from "lucide-react";
 
 interface MessageDialogProps {
@@ -45,7 +46,7 @@ export function MessageDialog({
                         onSubmit(e);
                         onOpenChange(false);
                     }} className="flex flex-col gap-4">
-                        <Input
+                        <Textarea
                             value={input}
                             onChange={(e) => onInputChange(e.target.value)}
                             placeholder="Type a message..."

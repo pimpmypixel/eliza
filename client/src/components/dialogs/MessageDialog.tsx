@@ -38,7 +38,7 @@ export function MessageDialog({
             </Button>
 
             <Dialog open={isOpen} onOpenChange={onOpenChange}>
-                <DialogContent className="fixed bottom-0 left-0 right-0 mb-0 rounded-b-none">
+                <DialogContent className="top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                     <DialogHeader>
                         <DialogTitle>Send a Message</DialogTitle>
                     </DialogHeader>

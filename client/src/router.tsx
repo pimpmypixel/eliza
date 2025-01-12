@@ -9,7 +9,7 @@ import Character from "./Character";
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <Agents />,
+        element: <Agent />,
     },
     {
         path: "/:agentId",

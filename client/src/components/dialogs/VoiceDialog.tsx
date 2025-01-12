@@ -6,17 +6,18 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Mic, CheckIcon } from "lucide-react";
+import { Mic, CheckIcon, Loader2 } from "lucide-react";
 
 interface VoiceDialogProps {
     onRecord?: (text: string) => void;
+    isPending: boolean;
 }
 
 let mediaRecorder: MediaRecorder | null = null;
 let audioText;
 const options = { mimeType: 'video/webm' };
 
-export function VoiceDialog({ onRecord }: VoiceDialogProps) {
+export function VoiceDialog({ onRecord, isPending }: VoiceDialogProps) {
     let currentText = '';
     const [isPressed, setIsPressed] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export function VoiceDialog({ onRecord }: VoiceDialogProps) {
 
 
     const startRec = () => {
+        if (isPending) return;
         setRecord(true);
         setText('');
     };
@@ -88,7 +90,7 @@ export function VoiceDialog({ onRecord }: VoiceDialogProps) {
                     if (transcript && received.is_final) {
                         currentText = currentText.concat(' ' + transcript);
                         audioText = currentText;
-                        console.log(audioText);
+                        // console.log(audioText);
                         setText(audioText);
                         onRecord(audioText);
                         setIsPressed(false)
@@ -112,12 +114,16 @@ export function VoiceDialog({ onRecord }: VoiceDialogProps) {
                 size="icon"
                 onClick={() => setIsPressed(true)}
             >
-                <Mic className={`text-primary h-4 w-4 ${record ? 'text-primary animate-pulse' : ''}`} />
+                {isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                    <Mic className={`text-primary h-4 w-4 ${record ? 'text-primary animate-pulse' : ''}`} />
+                )}
             </Button>
 
             <Dialog open={isPressed} onOpenChange={setIsPressed}>
                 <DialogContent className="text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <DialogTitle>Voice Recording</DialogTitle>
+                    <DialogTitle>Talk to me!</DialogTitle>
                     <div className="flex flex-col items-center gap-4 py-8">
                         {error ? (
                             <div className="text-red-500">{error}</div>

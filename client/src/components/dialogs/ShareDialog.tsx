@@ -16,8 +16,8 @@ export function ShareDialog({ isOpen, onOpenChange }: ShareDialogProps) {
     const handleShare = async () => {
         try {
             await navigator.share({
-                title: 'Check out this conversation',
-                text: 'I had an interesting chat with an AI agent',
+                title: 'Check out this itinerary!',
+                text: 'I made a trip with AItinerary for you!',
                 url: window.location.href,
             });
         } catch (error) {

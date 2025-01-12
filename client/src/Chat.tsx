@@ -5,13 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useGetAgentsQuery } from "@/api";
-import { RotateCw } from "lucide-react";
+import { RotateCw, SquarePlus } from "lucide-react";
 import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
 import { MessageDialog } from "@/components/dialogs/MessageDialog";
 import { LocationDialog } from "@/components/dialogs/LocationDialog";
 import { VoiceDialog } from "@/components/dialogs/VoiceDialog";
 import { ShareDialog } from "@/components/dialogs/ShareDialog";
 import "./App.css";
+import { Onboarder } from "./components/Onboarder";
 
 const durations: string[] = ["15 mins", "half hour", "1 hour", "3 hours", "6 hours", "1 day", "2 days", "3 days", "1 week", "2 weeks"];
 const categories: string[] = ["nature", "budget", "local", "authentic", "family", "romantic", "adventure", "cultural", "luxury", "food", "art", "history", "sports", "relax", "exercise", "work"];
@@ -34,7 +35,6 @@ export default function Chat() {
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
     const [newLocation, setNewLocation] = useState("");
-    // const { data: agents, isLoading } = useGetAgentsQuery()
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
@@ -143,6 +143,10 @@ export default function Chat() {
         }
     }, [input]);
 
+    useEffect(() => {
+        console.log(isPending);
+    }, [isPending]);
+
 
     return (
         <div className="flex flex-col h-screen max-h-screen w-full">
@@ -174,59 +178,17 @@ export default function Chat() {
                             </div>
                         ))
                     ) : (
-                        <div className="text-center text-sm text-muted-foreground">Hi there! I'm <span className="text-blue-500 font-bold">AI-TINERARY</span><br />your realtime travel assistant!<br />
-                            So what do you want to do in <Button
-                                size="xs"
-                                className="text-xs p-1 ml-1 bg-secondary text-primary-foreground"
-                                onClick={() => switchLocation()}
-                            >
-                                {town}
-                            </Button>
-                            <hr className="my-2" />
-                            <div className="flex flex-col gap-2">
-                                <div className="flex flex-col gap-2">
-                                    <span className="font-bold">How much time do we have?</span>
-                                    <div className="flex flex-wrap gap-2">
-                                        {durations.map((duration) => (
-                                            <Button
-                                                size="xs"
-                                                className="text-xs p-1"
-                                                key={duration}
-                                                variant={selectedDuration === duration ? "default" : "outline"}
-                                                onClick={() => setSelectedDuration(duration === selectedDuration ? null : duration)}
-                                            >
-                                                {duration}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                            <hr className="my-2" />
-                            <div className="flex flex-col gap-2">
-                                <div className="flex flex-col gap-2">
-                                    <span className="font-bold">Select your desired activities</span>
-                                    <div className="flex flex-wrap gap-2">
-                                        {categories.map((category) => (
-                                            <Button
-                                                key={category}
-                                                size="xs"
-                                                className="text-xs p-1"
-                                                variant={selectedCategories.includes(category) ? "default" : "outline"}
-                                                onClick={() => {
-                                                    setSelectedCategories(prev => prev.length >= 3 && !prev.includes(category) ? prev :
-                                                        prev.includes(category)
-                                                            ? prev.filter(c => c !== category)
-                                                            : [...prev, category]
-                                                    );
-                                                }}
-                                            >
-                                                {category}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <Onboarder
+                            town={town}
+                            submit={handleSubmit}
+                            switchLocation={switchLocation}
+                            durations={durations}
+                            selectedDuration={selectedDuration}
+                            setSelectedDuration={setSelectedDuration}
+                            categories={categories}
+                            selectedCategories={selectedCategories}
+                            setSelectedCategories={setSelectedCategories}
+                        />
                     )}{
                         isContinuePrompt && <div className="text-center text-sm text-muted-foreground">
                             <Button
@@ -254,18 +216,21 @@ export default function Chat() {
                     <div className="flex justify-between items-center">
                         <div className="mx-1">
                             <SettingsDialog
+                                isPending={isPending}
                                 isOpen={isSettingsModalOpen}
                                 onOpenChange={setIsSettingsModalOpen}
                             />
                         </div>
                         <div className="mx-1">
                             <ShareDialog
+                                isPending={isPending}
                                 isOpen={isShareDialogOpen}
                                 onOpenChange={setIsShareDialogOpen}
                             />
                         </div>
                         <div className="mx-1 scale-150">
                             <VoiceDialog
+                                isPending={isPending}
                                 onRecord={(text) => setInput(text)} />
                         </div>
                         <div className="mx-1">
@@ -285,7 +250,7 @@ export default function Chat() {
                                 size="icon"
                                 onClick={() => navigate('/')}
                             >
-                                <RotateCw className={`h-4 w-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+                                <SquarePlus className={`h-4 w-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
                             </Button>
 
                         </div>

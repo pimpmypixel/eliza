@@ -11,8 +11,9 @@ import { MessageDialog } from "@/components/dialogs/MessageDialog";
 import { LocationDialog } from "@/components/dialogs/LocationDialog";
 import { VoiceDialog } from "@/components/dialogs/VoiceDialog";
 import { ShareDialog } from "@/components/dialogs/ShareDialog";
-import "./App.css";
-import { Onboarder } from "./components/Onboarder";
+import "../css/App.css";
+import { useStore } from "@/store/useStore";
+import { Navbar } from "@/components/Navbar";
 
 const durations: string[] = ["15 mins", "half hour", "1 hour", "3 hours", "6 hours", "1 day", "2 days", "3 days", "1 week", "2 weeks"];
 const categories: string[] = ["nature", "budget", "local", "authentic", "family", "romantic", "adventure", "cultural", "luxury", "food", "art", "history", "sports", "relax", "exercise", "work"];
@@ -21,12 +22,16 @@ export default function Chat() {
     const { agentId } = useParams();
     const navigate = useNavigate();
 
-    const [input, setInput] = useState("");
-    const [messages, setMessages] = useState<TextResponse[]>([]);
+    const {
+        input, setInput
+    } = useStore((state) => state.agent);
+
+    const { messages, addMessage, setMessages, clearMessages } = useStore((state) => state.messages);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { mutate: sendMessage, isPending } = useSendMessageMutation({ setMessages });
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-    const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
+    // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    // const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
     const [location, setLocation] = useState<string | null>(null);
     const [isLoadingLocation, setIsLoadingLocation] = useState(false);
     const [context, setContext] = useState<string | null>(null);
@@ -69,7 +74,7 @@ export default function Chat() {
             user: "user",
         };
 
-        setMessages((prev) => [...prev, userMessage]);
+        addMessage(userMessage);
         sendMessage({ text: input || '', agentId, context });
         setInput("");
     };
@@ -87,7 +92,7 @@ export default function Chat() {
             user: "user",
         };
         setIsContinuePrompt(false);
-        setMessages((prev) => [...prev, userMessage]);
+        addMessage(userMessage);
         sendMessage({ text: answer, agentId, context });
     }
 
@@ -133,9 +138,9 @@ export default function Chat() {
         handleGetLocation();
     }, []);
 
-    useEffect(() => {
-        handleContext();
-    }, [selectedCategories, selectedDuration]);
+    // useEffect(() => {
+    //     handleContext();
+    // }, [selectedCategories, selectedDuration]);
 
     useEffect(() => {
         if (input) {
@@ -150,6 +155,7 @@ export default function Chat() {
 
     return (
         <div className="flex flex-col h-screen max-h-screen w-full">
+            <Navbar />
             <div className="flex-1 min-h-0 overflow-y-auto p-4">
                 <div className="max-w-3xl mx-auto space-y-3 text-sm">
                     {messages.length > 0 ? (
@@ -178,17 +184,7 @@ export default function Chat() {
                             </div>
                         ))
                     ) : (
-                        <Onboarder
-                            town={town}
-                            submit={handleSubmit}
-                            switchLocation={switchLocation}
-                            durations={durations}
-                            selectedDuration={selectedDuration}
-                            setSelectedDuration={setSelectedDuration}
-                            categories={categories}
-                            selectedCategories={selectedCategories}
-                            setSelectedCategories={setSelectedCategories}
-                        />
+                        <div>Hej</div>
                     )}{
                         isContinuePrompt && <div className="text-center text-sm text-muted-foreground">
                             <Button

@@ -1,29 +1,33 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router.tsx";
-import "./index.css";
+import './css/index.css'
+import App from './pages/App'
+import OnBoarding from './pages/OnBoarding'
+import Welcome from './pages/Welcome'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ThemeProvider } from '@/components/theme-provider'
+import Chat from './pages/Chat'
 
-// Initialize theme
-const theme = localStorage.getItem("theme") || "system";
-const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-document.documentElement.classList.add(theme === "system" ? systemTheme : theme);
-
-const PUBLISHABLE_KEY = 'pk_test_cHJvdmVuLWFpcmVkYWxlLTIyLmNsZXJrLmFjY291bnRzLmRldiQ'//import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
-if (!PUBLISHABLE_KEY) {
-    throw new Error("Missing Publishable Key")
-}
+const PUBLISHABLE_KEY = 'pk_test_cHJvdmVuLWFpcmVkYWxlLTIyLmNsZXJrLmFjY291bnRzLmRldiQ'
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
-            <QueryClientProvider client={queryClient}>
-                <RouterProvider router={router} />
-            </QueryClientProvider>
-        </ClerkProvider>
-    </StrictMode>
-);
+        <BrowserRouter>
+            <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+                <QueryClientProvider client={queryClient}>
+                    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                        <Routes>
+                            <Route path="/" element={<App />} />
+                            <Route path="/welcome" element={<Welcome />} />
+                            <Route path="/trip" element={<OnBoarding />} />
+                            <Route path="/agent" element={<Chat />} />
+                        </Routes>
+                    </ThemeProvider>
+                </QueryClientProvider>
+            </ClerkProvider>
+        </BrowserRouter>
+    </StrictMode>,
+)

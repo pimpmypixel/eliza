@@ -30,7 +30,7 @@ export default defineConfig({
     server: {
         // host: true,
         // host: 'aitinerary.redirectme.net',      // Optional: Your domain name
-        // port: 443,
+        port: 443,
         // https: {
         //     key: fs.readFileSync(path.resolve(__dirname, './aitinerary/aitinerary.redirectme.net-key.pem')),
         //     cert: fs.readFileSync(path.resolve(__dirname, './aitinerary/aitinerary.redirectme.net.pem')),

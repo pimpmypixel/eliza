@@ -5,12 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Client",
+            "url": "http://localhost:443",
+            "webRoot": "${workspaceFolder}/client",
+            "sourceMapPathOverrides": {
+                "/*": "${webRoot}/*"
+            }
+        },
+        {
             "type": "node",
             "request": "launch",
-            "name": "Launch via pnpm",
+            "name": "Launch Client Dev Server",
             "runtimeExecutable": "pnpm",
-            "runtimeArgs": ["run", "dev"],
-            "skipFiles": ["<node_internals>/**"]
+            "runtimeArgs": [
+                "--dir",
+                "client",
+                "dev"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }

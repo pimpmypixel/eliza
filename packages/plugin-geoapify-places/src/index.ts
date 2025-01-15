@@ -1,13 +1,14 @@
 import { Plugin } from "@elizaos/core";
-import { getCurrentWeatherAction } from "./actions/getCurrentEvents";
+import { getCurrentEvents } from "./actions/getCurrentEvents";
+import { getRestaurants } from "./actions/getRestaurants";
 
 export * as actions from "./actions";
 
-export const openWeatherPlugin: Plugin = {
-    name: "openweather",
-    description: "OpenWeather plugin for Eliza",
-    actions: [getCurrentWeatherAction],
+export const geoapifyPlacesPlugin: Plugin = {
+    name: "geoapify-places",
+    description: "Geoapify Places plugin for Eliza",
+    actions: [getCurrentEvents, getRestaurants],
     evaluators: [],
     providers: [],
 };
-export default openWeatherPlugin;
+export default geoapifyPlacesPlugin;

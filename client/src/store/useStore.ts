@@ -268,13 +268,16 @@ export const useStore = create<Store>((set) => ({
                     messages
                 }
             })),
-        addMessage: (message) =>
-            set((state) => ({
-                agent: {
-                    ...state.agent,
-                    messages: [...state.agent.messages, message]
-                }
-            })),
+        addMessage: (message) => {
+            console.log(message);
+            return (
+                set((state) => ({
+                    agent: {
+                        ...state.agent,
+                        messages: [...state.agent.messages, message]
+                    }
+                })))
+        },
         clearMessages: () =>
             set((state) => ({
                 agent: {

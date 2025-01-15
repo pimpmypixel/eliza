@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import type { TextResponse } from "@/api";
 import { useSendMessageMutation } from "@/api";
 import { useEffect, useRef, useState, SetStateAction } from "react";
-// import { useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
 import { useGetAgentsQuery } from "@/api";
 import { MessageDialog } from "@/components/dialogs/MessageDialog";
 import { VoiceDialog } from "@/components/dialogs/VoiceDialog";
@@ -13,18 +11,16 @@ import { Navbar } from "@/components/Navbar";
 import { useGeolocation } from '@/hooks/use-geolocation';
 import "../css/App.css";
 
+// const agentId = '6a4cce9c-ce72-02d7-826e-f4c073484929'; //agents?.[0]?.id;
 // const durations: string[] = ["15 mins", "half hour", "1 hour", "3 hours", "6 hours", "1 day", "2 days", "3 days", "1 week", "2 weeks"];
 // const categories: string[] = ["nature", "budget", "local", "authentic", "family", "romantic", "adventure", "cultural", "luxury", "food", "art", "history", "sports", "relax", "exercise", "work"];
 
 export default function Chat() {
-    // const { data: agents, isLoading } = useGetAgentsQuery()
-    const agentId = '6a4cce9c-ce72-02d7-826e-f4c073484929'; //agents?.[0]?.id;
-    // console.log(agentId);
-    // const { agentId } = useParams();
-    // const navigate = useNavigate();
+    const { data: agents, isLoading } = useGetAgentsQuery()
+    const agentId = agents?.[0]?.id;
 
     const {
-        messages, addMessage, setMessages, clearMessages,
+        messages, setMessages, addMessage, clearMessages,
         input, setInput,
         context, setContext,
         typedInput, setTypedInput,
@@ -49,6 +45,7 @@ export default function Chat() {
     };
 
     useEffect(() => {
+        console.log(messages);
         const lastMessage = messages[messages.length - 1];
         const isContinuePrompt = lastMessage?.action === 'CONTINUE';
         setIsContinuePrompt(isContinuePrompt);
@@ -73,6 +70,8 @@ export default function Chat() {
             text: input || 'Let\'s do this!',
             user: "user",
         };
+
+        debugger;
 
         if (spokenInput) {
             userMessage.text = spokenInput;
@@ -112,6 +111,8 @@ export default function Chat() {
     useEffect(() => {
         console.log(isPending);
     }, [isPending]);
+
+    console.log(messages);
 
 
     return (

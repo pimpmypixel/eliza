@@ -16,7 +16,7 @@ interface MessageDialogProps {
 }
 
 export function MessageDialog({ onSubmit, isPending }: MessageDialogProps) {
-    const { input, setInput } = useStore((state) => state.agent);
+    const { typedInput, setTypedInput } = useStore((state) => state.agent);
     const { isTypedMessageDialogOpen, setIsTypedMessageDialogOpen } = useStore((state) => state.app);
 
     return (
@@ -33,15 +33,15 @@ export function MessageDialog({ onSubmit, isPending }: MessageDialogProps) {
             <Dialog open={isTypedMessageDialogOpen} onOpenChange={setIsTypedMessageDialogOpen}>
                 <DialogContent className="top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                     <DialogHeader>
-                        <DialogTitle>Send a Message</DialogTitle>
+                        <DialogTitle>Write me a message</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={(e) => {
                         onSubmit(e);
                         setIsTypedMessageDialogOpen(false);
                     }} className="flex flex-col gap-4">
                         <Textarea
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
+                            value={typedInput}
+                            onChange={(e) => setTypedInput(e.target.value)}
                             placeholder="Type a message..."
                             className="flex-1"
                             disabled={isPending}

@@ -5,43 +5,50 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { KeyboardIcon } from "lucide-react";
-import { useStore } from "@/store/useStore";
 
 interface MessageDialogProps {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+    input: string;
+    onInputChange: (value: string) => void;
     onSubmit: (e: React.FormEvent) => void;
     isPending: boolean;
 }
 
-export function MessageDialog({ onSubmit, isPending }: MessageDialogProps) {
-    const { input, setInput } = useStore((state) => state.agent);
-    const { isTypedMessageDialogOpen, setIsTypedMessageDialogOpen } = useStore((state) => state.app);
-
+export function MessageDialog({
+    isOpen,
+    onOpenChange,
+    input,
+    onInputChange,
+    onSubmit,
+    isPending,
+}: MessageDialogProps) {
     return (
         <>
             <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => setIsTypedMessageDialogOpen(true)}
+                onClick={() => onOpenChange(true)}
             >
                 <KeyboardIcon />
             </Button>
 
-            <Dialog open={isTypedMessageDialogOpen} onOpenChange={setIsTypedMessageDialogOpen}>
+            <Dialog open={isOpen} onOpenChange={onOpenChange}>
                 <DialogContent className="top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
                     <DialogHeader>
                         <DialogTitle>Send a Message</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={(e) => {
                         onSubmit(e);
-                        setIsTypedMessageDialogOpen(false);
+                        onOpenChange(false);
                     }} className="flex flex-col gap-4">
                         <Textarea
                             value={input}
-                            onChange={(e) => setInput(e.target.value)}
+                            onChange={(e) => onInputChange(e.target.value)}
                             placeholder="Type a message..."
                             className="flex-1"
                             disabled={isPending}

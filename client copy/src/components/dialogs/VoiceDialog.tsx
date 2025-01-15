@@ -7,10 +7,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Mic, CheckIcon, Loader2 } from "lucide-react";
-import { useStore } from "@/store/useStore";
 
 interface VoiceDialogProps {
-    // onRecord?: (text: string) => void;
+    onRecord?: (text: string) => void;
     isPending: boolean;
 }
 
@@ -18,22 +17,23 @@ let mediaRecorder: MediaRecorder | null = null;
 let audioText;
 const options = { mimeType: 'video/webm' };
 
-export function VoiceDialog({ isPending }: VoiceDialogProps) {
+export function VoiceDialog({ onRecord, isPending }: VoiceDialogProps) {
     let currentText = '';
+    const [isPressed, setIsPressed] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { spokenInput, setSpokenInput } = useStore((state) => state.agent);
-    const {
-        isVoiceDialogOpen, setIsVoiceDialogOpen,
-        isVoiceRecording, setIsVoiceRecording } = useStore((state) => state.app);
+    const [record, setRecord] = useState(false);
+    // const [isRecording, setIsRecording] = useState(false);
+    const [text, setText] = useState('');
 
 
     const startRec = () => {
         if (isPending) return;
-        setIsVoiceRecording(true);
+        setRecord(true);
+        setText('');
     };
 
     const stopRec = async () => {
-        if (isVoiceRecording && mediaRecorder && mediaRecorder.state !== 'inactive') {
+        if (record && mediaRecorder && mediaRecorder.state !== 'inactive') {
             try {
                 // Stop recording
                 mediaRecorder.stop();
@@ -49,10 +49,10 @@ export function VoiceDialog({ isPending }: VoiceDialogProps) {
                 mediaRecorder = null;
 
                 // Reset state
-                setIsVoiceRecording(false);
+                setRecord(false);
                 currentText = '';
                 audioText = '';
-                setSpokenInput('');
+                setText('');
             } catch (error) {
                 console.error('Error stopping recording:', error);
             }
@@ -90,20 +90,20 @@ export function VoiceDialog({ isPending }: VoiceDialogProps) {
                     if (transcript && received.is_final) {
                         currentText = currentText.concat(' ' + transcript);
                         audioText = currentText;
-                        console.log(audioText);
-                        setSpokenInput(audioText);
-                        setIsVoiceRecording(false)
-                        setIsVoiceDialogOpen(false);
+                        // console.log(audioText);
+                        setText(audioText);
+                        onRecord(audioText);
+                        setIsPressed(false)
                     }
                 };
             });
     };
 
     useEffect(() => {
-        if (isVoiceRecording) {
+        if (record) {
             deepGramAudio2text();
         }
-    }, [isVoiceRecording]);
+    }, [record]);
 
 
     return (
@@ -112,16 +112,16 @@ export function VoiceDialog({ isPending }: VoiceDialogProps) {
                 type="button"
                 variant="outline"
                 size="icon"
-                onClick={() => setIsVoiceDialogOpen(true)}
+                onClick={() => setIsPressed(true)}
             >
                 {isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                    <Mic className={`text-primary h-4 w-4 ${isVoiceRecording ? 'text-primary animate-pulse' : ''}`} />
+                    <Mic className={`text-primary h-4 w-4 ${record ? 'text-primary animate-pulse' : ''}`} />
                 )}
             </Button>
 
-            <Dialog open={isVoiceDialogOpen} onOpenChange={setIsVoiceDialogOpen}>
+            <Dialog open={isPressed} onOpenChange={setIsPressed}>
                 <DialogContent className="text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <DialogTitle>Talk to me!</DialogTitle>
                     <div className="flex flex-col items-center gap-4 py-8">
@@ -130,14 +130,15 @@ export function VoiceDialog({ isPending }: VoiceDialogProps) {
                         ) : (
                             <>
                                 <Mic className="h-16 w-16 animate-pulse text-primary" />
-                                <p>Microphone: {isVoiceRecording ? 'on' : 'off'}</p>
+                                <p>Microphone: {record ? 'on' : 'off'}</p>
                                 <Button
                                     type="button"
-                                    variant={isVoiceRecording ? "destructive" : "default"}
-                                    onClick={isVoiceRecording ? stopRec : startRec}
+                                    variant={record ? "destructive" : "default"}
+                                    onClick={record ? stopRec : startRec}
                                 >
-                                    {isVoiceRecording ? 'Stop' : 'Start'}
+                                    {record ? 'Stop' : 'Start'}
                                 </Button>
+                                {/* <p className="text-sm text-muted-foreground">{text}</p> */}
                             </>
                         )}
                     </div>

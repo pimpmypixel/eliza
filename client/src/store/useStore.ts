@@ -1,17 +1,31 @@
 import { create } from 'zustand'
 import type { TextResponse } from "@/api";
-import { useSendMessageMutation } from "@/api";
+// import { useSendMessageMutation } from "@/api";
 
 type AppState = {
     isMobileMenuOpen: boolean
     setIsMobileMenuOpen: (isOpen: boolean) => void
+
     isSettingsOpen: boolean
     setIsSettingsOpen: (isOpen: boolean) => void
+
     currentStep: number
     setCurrentStep: (step: number) => void
+
     isSubmitting: boolean
     setIsSubmitting: (isSubmitting: boolean) => void
-    // Add more state and actions as needed
+
+    isTypedMessageDialogOpen: boolean
+    setIsTypedMessageDialogOpen: (isOpen: boolean) => void
+
+    isShareDialogOpen: boolean
+    setIsShareDialogOpen: (isOpen: boolean) => void
+
+    isVoiceDialogOpen: boolean
+    setIsVoiceDialogOpen: (isOpen: boolean) => void
+
+    isVoiceRecording: boolean
+    setIsVoiceRecording: (isRecording: boolean) => void
 }
 
 type UserState = {
@@ -38,6 +52,23 @@ type UserState = {
 type AgentState = {
     input: string
     setInput: (input: string) => void
+
+    typedInput: string
+    setTypedInput: (typedInput: string) => void
+
+    spokenInput: string
+    setSpokenInput: (spokenInput: string) => void
+
+    context: string
+    setContext: (context: string) => void
+
+    messages: TextResponse[]
+    setMessages: (messages: TextResponse[]) => void
+    addMessage: (message: TextResponse) => void
+    clearMessages: () => void
+
+    isContinuePrompt: boolean
+    setIsContinuePrompt: (isContinuePrompt: boolean) => void
 }
 
 type TripState = {
@@ -55,19 +86,11 @@ type TripState = {
     resetTripData: () => void
 }
 
-type MessagesState = {
-    messages: TextResponse[]
-    setMessages: (messages: TextResponse[]) => void
-    addMessage: (message: TextResponse) => void
-    clearMessages: () => void
-}
-
 type Store = {
     app: AppState,
     user: UserState,
     agent: AgentState,
-    trip: TripState,
-    messages: MessagesState
+    trip: TripState
 }
 
 export const useStore = create<Store>((set) => ({
@@ -96,13 +119,44 @@ export const useStore = create<Store>((set) => ({
                     currentStep: step
                 }
             })),
-
         isSubmitting: false,
         setIsSubmitting: (isSubmitting) =>
             set((state) => ({
                 app: {
                     ...state.app,
                     isSubmitting
+                }
+            })),
+        isTypedMessageDialogOpen: false,
+        setIsTypedMessageDialogOpen: (isOpen) =>
+            set((state) => ({
+                app: {
+                    ...state.app,
+                    isTypedMessageDialogOpen: isOpen
+                }
+            })),
+        isShareDialogOpen: false,
+        setIsShareDialogOpen: (isOpen) =>
+            set((state) => ({
+                app: {
+                    ...state.app,
+                    isShareDialogOpen: isOpen
+                }
+            })),
+        isVoiceDialogOpen: false,
+        setIsVoiceDialogOpen: (isOpen) =>
+            set((state) => ({
+                app: {
+                    ...state.app,
+                    isVoiceDialogOpen: isOpen
+                }
+            })),
+        isVoiceRecording: false,
+        setIsVoiceRecording: (isRecording) =>
+            set((state) => ({
+                app: {
+                    ...state.app,
+                    isVoiceRecording: isRecording
                 }
             })),
     },
@@ -182,6 +236,60 @@ export const useStore = create<Store>((set) => ({
                     input: input
                 }
             })),
+        typedInput: '',
+        setTypedInput: (typedInput) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    typedInput: typedInput
+                }
+            })),
+        spokenInput: '',
+        setSpokenInput: (spokenInput) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    spokenInput: spokenInput
+                }
+            })),
+        context: '',
+        setContext: (context) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    context: context
+                }
+            })),
+        messages: [],
+        setMessages: (messages) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    messages
+                }
+            })),
+        addMessage: (message) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    messages: [...state.agent.messages, message]
+                }
+            })),
+        clearMessages: () =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    messages: []
+                }
+            })),
+        isContinuePrompt: false,
+        setIsContinuePrompt: (isContinuePrompt) =>
+            set((state) => ({
+                agent: {
+                    ...state.agent,
+                    isContinuePrompt: isContinuePrompt
+                }
+            })),
     },
     trip: {
 
@@ -218,28 +326,4 @@ export const useStore = create<Store>((set) => ({
                 }
             }))
     },
-    messages: {
-        messages: [],
-        setMessages: (messages) =>
-            set((state) => ({
-                messages: {
-                    ...state.messages,
-                    messages
-                }
-            })),
-        addMessage: (message) =>
-            set((state) => ({
-                messages: {
-                    ...state.messages,
-                    messages: [...state.messages.messages, message]
-                }
-            })),
-        clearMessages: () =>
-            set((state) => ({
-                messages: {
-                    ...state.messages,
-                    messages: []
-                }
-            }))
-    }
 }))

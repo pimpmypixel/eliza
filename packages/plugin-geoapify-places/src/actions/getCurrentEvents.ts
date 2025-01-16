@@ -80,7 +80,8 @@ export const getCurrentEvents: Action = {
         try {
             const placesData = await placesService.getPlaces(
                 String(content?.city || ""),
-                content?.country ? String(content?.country) : undefined
+                content?.country ? [String(content?.country)] : undefined,
+                ["events"]
             );
             elizaLogger.success(
                 `Successfully fetched places for ${content.city}, ${content.country}`
